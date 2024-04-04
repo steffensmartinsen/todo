@@ -13,9 +13,14 @@ todos = {
     
 }
 
+# Request parser to ensure the correct data is sent
 task_post_args = reqparse.RequestParser()
 task_post_args.add_argument("task", type=str, required=True, help="Task is required")
 task_post_args.add_argument("summary", type=str, required=True, help="Summary is required")
+
+task_put_args = reqparse.RequestParser()
+task_put_args.add_argument("task", type=str)
+task_put_args.add_argument("summary", type=str)
 
 # Class to return all tasks
 class ToDoList(Resource):
@@ -25,6 +30,8 @@ class ToDoList(Resource):
 # Class to that handles an individual task
 class ToDo(Resource):
     def get(self, todo_id):
+        if todo_id not in todos:
+            abort(404, message="Task ID not found")
         return todos[todo_id]
     
     def post(self, todo_id):
@@ -33,6 +40,22 @@ class ToDo(Resource):
             abort(409, "Task ID already taken")
         todos[todo_id] = {"task": args["task"], "summary": args["summary"]}
         return todos[todo_id], 201
+    
+    def put(self, todo_id):
+        args = task_put_args.parse_args()
+        if todo_id not in todos:
+            abort(404, message="Task ID not found")
+        if args["task"]:
+            todos[todo_id]["task"]=args["task"]
+        if args["summary"]:
+            todos[todo_id]["summary"]=args["summary"]
+        return todos[todo_id]
+
+    def delete(self, todo_id):
+        if todo_id not in todos:
+            abort(404, "Task ID not found")
+        del todos[todo_id]
+        return '', 204
 
 # Add endpoints
 api.add_resource(ToDo, '/todo/<int:todo_id>')
