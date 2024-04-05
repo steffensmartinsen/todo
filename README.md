@@ -29,6 +29,7 @@ To invoke the `/todo` endpoint, it is simply appended at the end of a url (*127.
 ## Endpoint `todo/{id}`
 To invoke the `/todo/{id}` endpoint the `{id}` needs to be a recognized ID within the database. <br>
 Generally the `{id}` follows an incrementation, but this is not enforced as far as I understand.
+<br>This endpoint support **GET, POST, PUT,** and **DELETE** requests.
 <br><br>
 **Example URL:** `http://127.0.0.1:500/todo/1`<br>
 **Example Response:**
